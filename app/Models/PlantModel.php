@@ -24,7 +24,8 @@ class PlantModel extends Model
 
     protected $casts = [
         'date_planted' => 'date',
-        'estimated_count' => 'integer',
+        // 'estimated_count' => 'integer',
+        'seedling_count' => 'integer',
         'starting_fund' => 'decimal:2',
     ];
 }
