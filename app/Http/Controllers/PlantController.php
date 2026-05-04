@@ -12,10 +12,25 @@ class PlantController extends Controller
   /**
    * Display a listing of the resource.
    */
-  public function index()
+  public function index(Request $request)
   {
     //TODO : implement load all the records
     //TODO : implement pagination when loading all the records
+    $perPage = $request->input('per_page', 15);
+    $plants = PlantModel::paginate($perPage);
+    
+    return response()->json([
+      'success' => true,
+      'data' => $plants->items(),
+      'pagination' => [
+        'current_page' => $plants->currentPage(),
+        'per_page' => $plants->perPage(),
+        'total' => $plants->total(),
+        'last_page' => $plants->lastPage(),
+        'from' => $plants->firstItem(),
+        'to' => $plants->lastItem(),
+      ]
+    ]);
   }
 
   /**
@@ -24,6 +39,24 @@ class PlantController extends Controller
   public function store(Request $request)
   {
     //TODO: implement save record functionality
+    $validated = $request->validate([
+      'name' => 'required|string|max:255',
+      'variety' => 'nullable|string|max:255',
+      'notes' => 'nullable|string',
+      'date_planted' => 'required|date',
+      'seedling_count' => 'nullable|integer|min:0',
+      'batch_name' => 'nullable|string|max:255',
+      'starting_fund' => 'nullable|numeric|min:0',
+      'seedling_source' => 'nullable|string|max:255',
+    ]);
+
+    $plant = PlantModel::create($validated);
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Plant record created successfully',
+      'data' => $plant
+    ], 201);
   }
 
   /**
@@ -40,6 +73,24 @@ class PlantController extends Controller
   public function update(Request $request, PlantModel $plantController)
   {
     //TODO : implement update record functionality
+    $validated = $request->validate([
+      'name' => 'sometimes|required|string|max:255',
+      'variety' => 'nullable|string|max:255',
+      'notes' => 'nullable|string',
+      'date_planted' => 'sometimes|required|date',
+      'seedling_count' => 'nullable|integer|min:0',
+      'batch_name' => 'nullable|string|max:255',
+      'starting_fund' => 'nullable|numeric|min:0',
+      'seedling_source' => 'nullable|string|max:255',
+    ]);
+
+    $plantController->update($validated);
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Plant record updated successfully',
+      'data' => $plantController->fresh()
+    ]);
   }
 
   /**
@@ -48,5 +99,11 @@ class PlantController extends Controller
   public function destroy(PlantModel $plant)
   {
     //TODO : implement delete record functionality
+    $plant->delete();
+
+    return response()->json([
+      'success' => true,
+      'message' => 'Plant record deleted successfully'
+    ]);
   }
 }
