@@ -27,11 +27,6 @@ class AuthController extends Controller
         // Get authenticated user
         $user = Auth::user();
 
-        if (! $user) {
-            return response()->json([
-                'message' => 'Unable to create token',
-            ], 500);
-        }
         // Generate token (Laravel Sanctum)
         $token = $user->createToken('auth_token')->plainTextToken;
 
