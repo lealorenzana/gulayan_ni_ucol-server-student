@@ -62,15 +62,18 @@ class PlantController extends Controller
   /**
    * Display the specified resource.
    */
-  public function show(PlantModel $plantController)
+  public function show(PlantModel $plant)
   {
-    //
+    return response()->json([
+      'success' => true,
+      'data' => $plant
+    ]);
   }
 
   /**
    * Update the specified resource in storage.
    */
-  public function update(Request $request, PlantModel $plantController)
+  public function update(Request $request, PlantModel $plant)
   {
     //TODO : implement update record functionality
     $validated = $request->validate([
@@ -84,12 +87,12 @@ class PlantController extends Controller
       'seedling_source' => 'nullable|string|max:255',
     ]);
 
-    $plantController->update($validated);
+    $plant->update($validated);
 
     return response()->json([
       'success' => true,
       'message' => 'Plant record updated successfully',
-      'data' => $plantController->fresh()
+      'data' => $plant->fresh()
     ]);
   }
 
